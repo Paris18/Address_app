@@ -19,6 +19,7 @@ from django.contrib import admin
 
 # Project Level Imports
 from accounts import views as account_views
+from address import views as address_views
 
 
 # Third Party Imports
@@ -30,11 +31,10 @@ router = SimpleRouter()
 # register accounts app urls with router
 router.register(r'accounts', account_views.UserViewSet, base_name='accounts')
 router.register(r'profile', account_views.ProfileViewSet, base_name='Profile')
+router.register(r'address', address_views.AddressViewSet, base_name='address')
 
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
     path('api/v1/', include((router.urls, 'api'), namespace='v1')),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

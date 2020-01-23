@@ -1,15 +1,10 @@
 # django imports
-from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
-# from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-# from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 
 
 # app level imports
@@ -43,11 +38,6 @@ from libs.exceptions import (
 							ResourceNotFoundException,
 							)
 
-from libs import (
-				# redis_client,
-				ganeratepass,
-				mail,
-				)
 
 
 
@@ -96,17 +86,17 @@ class UserViewSet(GenericViewSet):
 		if user:
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-		return Response({}, status.HTTP_200_OK)
+		return Response({'status':'User Created Successfully'}, status.HTTP_200_OK)
 
 	@action(methods=['post'], detail=False)
 	def login(self, request):
+		""" login api with mobile or email"""
 
 		serializer = self.get_serializer(data=request.data)
 
 		if serializer.is_valid() is False:
 			raise ParseException(BAD_REQUEST, serializer.errors)
 
-		print (serializer.validated_data["password"])
 		mobile = serializer.validated_data.get("mobile",None)
 		email = serializer.validated_data.get("email",None)
 
@@ -160,9 +150,9 @@ class UserViewSet(GenericViewSet):
 		Return user profile data and groups
 		"""
 		try:
-			d = self.get_queryset()
-			data = self.get_serializer(d,many=True).data
-			return Response(data, status.HTTP_200_OK)
+			page = self.paginate_queryset(self.get_queryset())
+			serialiser = self.get_serializer(page,many=True)
+			return self.get_paginated_response(serialiser.data)
 		except Exception as e:
 			raise ResourceNotFoundException(BAD_REQUEST)
 
@@ -189,8 +179,6 @@ class UserViewSet(GenericViewSet):
 			return Response(serializer.data, status.HTTP_200_OK)
 		except Exception as e:
 			return Response({"status": str(e)}, status.HTTP_404_NOT_FOUND)
-
-
 
 
 class ProfileViewSet(GenericViewSet):
@@ -251,9 +239,10 @@ class ProfileViewSet(GenericViewSet):
 		Return user profile data and groups
 		"""
 		try:
-			d = self.get_queryset()
-			data = self.get_serializer(d,many=True).data
-			return Response(data, status.HTTP_200_OK)
+			page = self.paginate_queryset(self.get_queryset())
+			serialiser = self.get_serializer(page,many=True)
+			return self.get_paginated_response(serialiser.data)
+
 		except Exception as e:
 			raise ResourceNotFoundException(BAD_REQUEST)
 

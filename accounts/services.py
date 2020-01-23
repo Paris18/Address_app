@@ -1,8 +1,11 @@
+# Django imports
 from django.contrib.auth import backends
-from accounts.models import Profile
 from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken
+
+# App level imports
+from .models import Profile
 
 
 # Project level imports
@@ -17,8 +20,8 @@ class AuthenticationBackend(backends.ModelBackend):
 	with password
 	"""
 	def authenticate(self, username=None,mobile = None,email = None, password=None, **kwargs):
+		""" custom authenticate with mobile or email"""
 		try:
-			print (mobile,email,password)
 			user = Profile.objects.get(
 				Q(mobile=mobile) | Q(user__email__iexact=email))
 			if user.user.check_password(password):
@@ -28,6 +31,7 @@ class AuthenticationBackend(backends.ModelBackend):
 
 
 class JWTtoken:
+	""" jwt creating using the user instance"""
 
 	@staticmethod
 	def get_tokens_for_user(user):
@@ -44,7 +48,7 @@ class UserService:
 	@classmethod
 	def get_queryset(cls, filter_data = None):
 		"""
-		fetching the group queryset on product id
+		fetching the user queryset on user id
 		"""
 		queryset = User.objects.all()
 		if filter_data:
@@ -57,7 +61,7 @@ class UserService:
 	@classmethod
 	def get_instance(cls,user_id):
 		"""
-		fetching the group instance on product id
+		fetching the user instance on user id
 		"""
 		try:
 			return User.objects.get(id=user_id)
@@ -70,7 +74,7 @@ class ProfileSevice:
 	@classmethod
 	def get_queryset(cls, filter_data = None):
 		"""
-		fetching the group queryset on product id
+		fetching the profile queryset on profile id
 		"""
 		queryset = Profile.objects.select_related('user').all()
 		if filter_data:
@@ -83,7 +87,7 @@ class ProfileSevice:
 	@classmethod
 	def get_instance(cls,user):
 		"""
-		fetching the group instance on product id
+		fetching the profile instance on profile id
 		"""
 		try:
 			return Profile.objects.select_related('user').get(user=user)

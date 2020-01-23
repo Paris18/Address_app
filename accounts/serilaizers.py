@@ -47,12 +47,8 @@ class UserRegSerializer(serializers.ModelSerializer):
         max_value=9999999999,
         validators=[UniqueValidator(queryset=Profile.objects.all())]
     )
-    # reporting_person = serializers.PrimaryKeyRelatedField(required=False,queryset=User.objects.all(),pk_field=serializers.UUIDField(format='hex'))
-
     class Meta:
         model = User
-        # Tuple of serialized model fields (see link [2])
-        # fields = ( "id", "username", "password", )
         fields = ('id', 'password', 'email', 'first_name', 'last_name',"mobile")
         write_only_fields = ('password',)
         read_only_fields = ('id',)
@@ -75,8 +71,6 @@ class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # Tuple of serialized model fields (see link [2])
-        # fields = ( "id", "username", "password", )
         fields = ('id', 'email', 'first_name', 'last_name', 'is_active','username')
 
 
@@ -107,13 +101,11 @@ class UserUpdateRequestSerializer(serializers.Serializer):
         read_only_fields = ('id',)
 
 class UserPassUpdateSerializer(serializers.ModelSerializer):
-    # old_password = serializers.CharField(required=True)
 
     class Meta:
         model = User
         fields = ('id','password',)
-        # write_only_fields = ('password',)
-
+    
     def validate(self,data):
         return data
 
