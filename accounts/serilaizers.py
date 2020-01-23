@@ -122,12 +122,12 @@ class ProfileListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'mobile', 'gender', 'image_url','user')
+        fields = ('id', 'mobile', 'gender', 'profile_image','user')
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     gender = serializers.CharField(required=False)
     user = UserListSerializer(required=False)
-    image_url = serializers.CharField(required=False)
+    profile_image = serializers.ImageField(required=False)
     mobile = serializers.IntegerField(
         required=False,
         min_value=5000000000,
@@ -147,4 +147,4 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'mobile', 'gender', 'image_url','user')
+        fields = ('id', 'mobile', 'gender', 'profile_image','user')
